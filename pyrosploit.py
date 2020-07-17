@@ -186,9 +186,9 @@ This command does not require any args.
 '''
 def pyterpreter_generate_function():
     if attacker.public == False:
-        format_pyterpreter(attacker, stager)
+        format_pyterpreter(attacker, handler_server)
     elif attacker.public == True:
-        format_pyterpreter(public_machine, stager)
+        format_pyterpreter(public_machine, handler_server)
 pyterpreter_generate = command(pyterpreter_generate_help, 'pyterpreter_generate', pyterpreter_generate_function, False)
 
 def get_attacker_info():

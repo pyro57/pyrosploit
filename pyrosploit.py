@@ -32,6 +32,15 @@ good hunting!!
 
 ############################################# Base Commands ##############################################
 
+############################################## Quick Start ###############################################
+quick_start_help = '''
+this is a command to get everything up and running for you.
+'''
+def quick_start_function():
+    quick_start_run()
+
+quick_start = lib.command(quick_start_help, 'quick_start', quick_start_function, False)
+
 ############################################# handler commands ##############################################
 
 ############################################## handler setup ################################################
@@ -154,6 +163,19 @@ def format_pytruder(format, server):
         with open('pytruder.{}'.format(format), 'w') as x:
             output = '\n'.join(output)
             x.write(output)
+
+
+def quick_start_run():
+    print("stager_setup")
+    stager_setup_function()
+    print("handler_setup")
+    handler_set_run()
+    print("pyterpreter_generate")
+    pyterpreter_generate_function()
+    print("stager_run")
+    stager_run_function()
+    print("handler_run")
+    handler_run_function()
 
 
 def main():

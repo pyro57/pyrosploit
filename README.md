@@ -3,11 +3,12 @@
 1. encrypt communications between pyterpreter server and client using pub/priv key encryption
 2. create a setup script to install what we need and generate the key pair for above communication
 3. break into a library file and main script file to make it easier to read
-4. add more built in commands to pyterpreter to make it more useful
-5. multithread/process it to allow backgrounding of interaction with the shell
-6. facilitate multiple shell communcations at the same time using above threading/processing
-7. create documentation for contributing commands for pyterpreter/pyrosploit
-8. create download cradle one line generator
+4. Finish pytruder scripts and one-liners
+5. add more built in commands to pyterpreter to make it more useful
+6. multithread/process it to allow backgrounding of interaction with the shell
+7. facilitate multiple shell communcations at the same time using above threading/processing
+8. create documentation for contributing commands for pyterpreter/pyrosploit
+9. create download cradle one line generator
 
 # Installation
 You will need the following python libraries installed: termcolor

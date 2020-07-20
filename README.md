@@ -15,7 +15,7 @@ You will need the following python libraries installed: termcolor
 after that for now that's pretty much it, once I get the encrpytion part done you'll need to generate the keys to use, which I'll cover here when I get that finished.
 
 # Usage
-1. run `python pyterpreter`
+1. run `python pyrosploit`
 2. handler_setup
 3. stager_setup
 4. pyterpreter_generate

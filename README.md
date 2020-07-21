@@ -24,3 +24,7 @@ after that for now that's pretty much it, once I get the encrpytion part done yo
 running the commands in this order will get you rocking and rolling, basically you'll have a webpage at http://$attacker.ip:stager.port/pyterpreter.py.  The idea is you'll have code execution on a server and you want a better shell that persists but leaves as little trace as possible.  So what you do is create some kind of scheduled task, or cron job, that uses python (powershell eventually maybe) to run this code, and only run it in memory so nothing is dumped to a file.
 
 NOTE: for the time being the shell is a bit finacky and cd doesn't work.
+
+
+LICENSE:
+I'm just gonna call this the pyrolicense.  Do with this project what you will, it is intended to be used by security researches and penetration testers on Networks they have permission to attack.  If you use this tool for illegal actions I can not be held responsible for it.  If you want to take this code and make it your own you may do so, just credit me somewhere in it.

@@ -27,4 +27,4 @@ NOTE: for the time being the shell is a bit finacky and cd doesn't work.
 
 
 LICENSE:
-I'm just gonna call this the pyrolicense.  Do with this project what you will, it is intended to be used by security researches and penetration testers on Networks they have permission to attack.  If you use this tool for illegal actions I can not be held responsible for it.  If you want to take this code and make it your own you may do so, just credit me somewhere in it.
+This project is licensed under the GPLv3 (see GPLv3.txt), and is intended for use only on networks you have permission to use it on.  Any illegal actions taken by users of this project are their own, and I assume no responsibility for their actions.

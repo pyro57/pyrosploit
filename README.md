@@ -11,7 +11,7 @@
 9. create download cradle one line generator
 
 # Installation
-You will need the following python libraries installed: termcolor
+You will need the following python libraries installed: termcolor, and RSA for communication encrpytion... not implemented yet.
 after that for now that's pretty much it, once I get the encrpytion part done you'll need to generate the keys to use, which I'll cover here when I get that finished.
 
 # Usage

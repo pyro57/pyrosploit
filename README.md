@@ -27,4 +27,4 @@ NOTE: for the time being the shell is a bit finacky and cd doesn't work.
 
 
 LICENSE:
-This project is licensed under the GPLv3 (see GPLv3.txt), and is intended for use only on networks you have permission to use it on.  Any illegal actions taken by users of this project are their own, and I assume no responsibility for their actions.
+This project is licensed under the GPLv3 (see LICENSE file), and is intended for use only on networks you have permission to use it on.  Any illegal actions taken by users of this project are their own, and I assume no responsibility for their actions.

